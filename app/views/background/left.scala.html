@@ -1,0 +1,98 @@
+@(proname: String)
+
+<div class="page-sidebar-wrapper">
+    <div class="page-sidebar navbar-collapse collapse">
+        <ul class="page-sidebar-menu " data-auto-scroll="true" data-slide-speed="200" id="projects">
+
+            <li class="sidebar-toggler-wrapper" style="height: 52px;
+                background-color: #2B2A28;">
+                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                <div class="sidebar-toggler">
+                </div>
+
+
+                <h4 class="platform-title" >多样性分析平台</h4>
+
+
+                    <!-- END SIDEBAR TOGGLER BUTTON -->
+            </li>
+
+
+            <li class="left-height" id="home">
+                <a href='@routes.SampleController.home' class="left-a-open">
+
+                    <i class='fa fa-database'></i>
+                    <span class="title">项目总览</span>
+                    <span class='selected'></span>
+
+                </a>
+            </li>
+
+
+            @if(proname != "") {
+
+                <li  style="background-color: #2B2A28;
+                    height: 40px" class="left-project">
+                    <a>
+                        <i class="fa fa-arrows-alt"></i>
+                        <span class="title">@proname</span>
+                    </a>
+                </li>
+
+
+                <li class="left-height left-project" id="uploadData">
+                    <a href='@routes.SampleController.uploadData(proname)' class="left-a-open">
+                        <i class='fa fa-upload'></i>
+                        <span class="title">数据导入</span>
+                        <span class='selected'></span>
+
+                    </a>
+                </li>
+
+                <li class="left-height left-project" id="sampleManage">
+                    <a href='@routes.SampleController.sampleManage(proname)' class="left-a-open">
+                        <i class='fa fa-cloud'></i>
+                        <span class="title">样品管理</span>
+                        <span class='selected'></span>
+                    </a>
+                </li>
+
+                <li class="left-height left-project" id="otuPage">
+                    <a href='@routes.OtuController.otuPage(proname)' class="left-a-open">
+                        <i class='fa fa-columns'></i>
+                        <span class="title">OTU聚类</span>
+                        <span class='selected'></span>
+                    </a>
+                </li>
+
+                <li class="left-height left-project" id="resultManage">
+                    <a href='@routes.OtuController.resultManage(proname)' class="left-a-open">
+                        <i class='fa fa-th'></i>
+                        <span class="title">结果管理</span>
+                        <span class='selected'></span>
+                    </a>
+                </li>
+            }
+
+
+        </ul>
+    </div>
+</div>
+
+<script>
+        $(function () {
+            var href = window.location.href;
+            var array = href.split("/");
+            var code = array[array.length - 1];
+            if (code.indexOf("?") != -1) {
+                var id = code.split("?")[0];
+                $("#" + id).addClass('active')
+            } else {
+                $("#" + code).addClass('active')
+            }
+        })
+
+</script>
+
+
+
