@@ -1,5 +1,5 @@
 @(proname: String)(implicit session: Session)
-@fileupload.main("分析结果", proname) {
+@background.main("分析结果", proname) {
 
     <style>
             .update {
@@ -500,7 +500,7 @@
     <script>
 
 
-        var tableHtml = $("#tableContent").html();
+            var tableHtml = $("#tableContent").html();
 
             $(function () {
                 tableInformation();
@@ -658,8 +658,8 @@
 
             function sureUpdate() {
                 var form = $("#updateForm")
-                var fv = form.data("formValidation")
-                fv.validate()
+                var fv = form.data("formValidation");
+                fv.validate();
                 if (fv.isValid()) {
                     var index = layer.load(1, {
                         shade: [0.1, '#fff']
@@ -683,7 +683,7 @@
             function restart(obj) {
                 var id = obj.value;
                 $.ajax({
-                    url: "/project/Otu/getDeploy?id=" + id,
+                    url: "/diversity/otu/getDeploy?id=" + id,
                     type: "post",
                     dataType: "json",
                     success: function (data) {
@@ -725,7 +725,7 @@
             function openRdp(obj) {
                 var id = obj.value;
                 $.ajax({
-                    url: "/project/Otu/getRdpDeploy?id=" + id,
+                    url: "/diversity/otu/getRdpDeploy?id=" + id,
                     type: "post",
                     dataType: "json",
                     success: function (data) {
@@ -763,7 +763,7 @@
                                 $("#restRdp").modal("hide");
                                 updateTable();
                                 $.ajax({
-                                    url: "/project/Otu/runRdpCmd?id=" + data.id,
+                                    url: "/diversity/otu/runRdpCmd?id=" + data.id,
                                     type: "post"
                                 })
                             }
@@ -787,7 +787,7 @@
                 var id = obj.value;
                 deleting();
                 $.ajax({
-                    url: "/project/deleteTask?id=" + id,
+                    url: "/diversity/otu/deleteTask?id=" + id,
                     type: "delete",
                     dataType: "json",
                     success: function (data) {
@@ -807,7 +807,7 @@
                 $("#logInfo").empty();
                 var id = obj.value;
                 $.ajax({
-                    url: "/project/getOtuLog?id=" + id,
+                    url: "/diversity/otu/getOtuLog?id=" + id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
@@ -854,7 +854,7 @@
                                 $("#rest").modal("hide");
                                 updateTable();
                                 $.ajax({
-                                    url: "/project/Otu/runResetCmd?id=" + data.id,
+                                    url: "/diversity/otu/runResetCmd?id=" + data.id,
                                     type: "post"
                                 })
                             }
@@ -871,7 +871,7 @@
                 $("#tableShow").modal("show");
                 var id = obj.id;
                             $.ajax({
-                                url: "/project/Otu/getTax?id=" +id,
+                                url: "/diversity/otu/getTax?id=" +id,
                                 type: "get",
                                 dataType: "json",
                                 success: function (data) {

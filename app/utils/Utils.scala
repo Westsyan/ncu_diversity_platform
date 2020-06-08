@@ -86,12 +86,12 @@ object Utils {
   }
 
   def outPath(userId:Int,proId:Int,sampleId:Int) : String ={
-   val out = path + "/" + userId + "/" + proId + "/data/" + sampleId
+   val out = path + "/data/" + userId + "/" + proId + "/data/" + sampleId
     out
   }
 
   def otuPath(userId:Int,proId:Int,taskId:Int) : String ={
-    val out = path + "/" + userId + "/" + proId + "/otu/" + taskId
+    val out = path + "/data/" + userId + "/" + proId + "/otu/" + taskId
     out
   }
 

@@ -1,5 +1,5 @@
 @(proname: String)(implicit session: Session)
-@fileupload.main("OTU聚类和分类学注释分析", proname) {
+@background.main("OTU聚类和分类学注释分析", proname) {
 
     <style>
             label {
@@ -49,7 +49,7 @@
 
                                     <div class="form-group">
                                         <label class="col-sm-12">任务名:</label>
-                                        <div class="col-sm-4 indent">
+                                        <div class="col-sm-5 indent">
                                             <input name="otuname" id="otuname" class="form-control" />
                                             <small style="color: red;
                                                 display: none;" id="remote" class="help-block" data-fv-validator="callback" data-fv-for="sample[]" data-fv-result="INVALID">
@@ -59,7 +59,7 @@
 
                                     <div class="form-group">
                                         <label class="col-sm-12">请选择输入样品:</label>
-                                        <div class="col-sm-4 indent">
+                                        <div class="col-sm-5 indent">
                                             <select name="sample[]" id="sample" class="checkbox form-control phenotypeName" multiple></select>
                                         </div>
                                         <div class="col-sm-2" style="margin-top: 5px;">
@@ -90,7 +90,7 @@
                                             <p class="col-sm-5">
                                                 Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <input name="minseqlength" id="minseqlength" class="form-control" value="200" />
                                                 </div>
                                             </div>
@@ -100,7 +100,7 @@
                                             <p class="col-sm-5">
                                                 Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <input name="otu_radius_pct" id="otu_radius_pct" class="form-control" value="3.0" />
                                                 </div>
                                             </div>
@@ -110,7 +110,7 @@
                                             <p class="col-sm-5">
                                                 Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <input name="id" id="id" class="form-control" value="0.97" />
                                                 </div>
                                             </div>
@@ -120,7 +120,7 @@
                                             <p class="col-sm-5">
                                                 cluster_otus(cluster) and usearch_global(mapping) strand:</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <select class="form-control" name="strand">
                                                         <option value="plus">plus</option>
                                                         <option value="both" selected>both</option>
@@ -154,7 +154,7 @@
                                             <p class="col-sm-5">
                                                 Select Database:</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <select class="form-control" name="db">
                                                         <option value="greengenes.16s">greengenes.16s</option>
                                                         <option value="greengenes.16s_archaea">greengenes.16s_archaea</option>
@@ -179,7 +179,7 @@
                                             <p class="col-sm-5">
                                                 Taxon assignment method:</p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <select class="form-control" name="method" onchange="change(this)">
                                                         <option value="rdp">RDP Classifier</option>
                                                         <option value="uclust" selected>
@@ -195,7 +195,7 @@
                                         <p class="col-sm-12">
                                             Minimum confidence to record an assignment, used for rdp method </p>
                                             <div class="col-sm-12 indent-3">
-                                                <div class="col-sm-4">
+                                                <div class="col-sm-5">
                                                     <input name="c" id="c" class="form-control" value="0.7" />
                                                 </div>
                                             </div>
@@ -207,7 +207,7 @@
                                                 <p class="col-sm-5">
                                                     Number of database hits to consider when making an assignment, used for uclust method </p>
                                                 <div class="col-sm-12 indent-3">
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-5">
                                                         <input name="uma" id="uma" class="form-control" value="3" />
                                                     </div>
                                                 </div>
@@ -218,7 +218,7 @@
                                                 <p class="col-sm-5">
                                                     Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </p>
                                                 <div class="col-sm-12 indent-3">
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-5">
                                                         <input name="s" id="s" class="form-control" value="0.9" />
                                                     </div>
                                                 </div>
@@ -366,30 +366,23 @@
             }
 
             $(function () {
+                formValidation();
 
+                getTaskName();
                 $.ajax({
-                    url: "/project/getAllSampleName?proname=@proname",
+                    url: "/diversity/sample/getAllSampleName?proname=@proname",
                     type: "post",
                     success: function (data) {
                         $("#sample").select2(
                                 {
                                     data: data,
-                                    closeOnSelect: false,
+                                    closeOnSelect: false
                                 }
                         );
                     }
                 });
 
 
-                $.ajax({
-                    url: "/project/getTime",
-                    type: "post",
-                    success: function (data) {
-                        $("#otuname").val(data.date + "_OTU");
-                    }
-                });
-
-                formValidation();
             });
 
 
@@ -432,7 +425,7 @@
                                     message: '必须为整数！'
                                 },
                                 greaterThan: {
-                                    min: 0,
+                                    value: 0,
                                     message: "必须大于0！"
                                 }
                             }
@@ -525,15 +518,29 @@
             });
 
             function change(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "rdp") {
-                    $("#rdp-1").show()
+                    $("#rdp-1").show();
                     $("#uclust-1").hide()
                 } else {
-                    $("#rdp-1").hide()
+                    $("#rdp-1").hide();
                     $("#uclust-1").show()
                 }
             }
+
+            function getTaskName() {
+                let date = new Date();
+                let year = date.getFullYear();
+                let month = date.getMonth() + 1;
+                let day = date.getDate();
+                let h = date.getHours();
+                let m = date.getMinutes();
+                let s = date.getSeconds();
+                let name = "" + year + month + day + h + m + s + "_Task";
+                $("#otuname").val(name);
+                $("#UpdateForm").formValidation("revalidateField", "otuname");
+            }
+
 
 
             function Running() {
@@ -564,8 +571,7 @@
                                     success: function (data1) {
                                         layer.close(index);
                                         if (data1.valid == "true") {
-                                            var id = data1.id;
-                                            window.location.href = "/project/resultManage?proname=@proname&id=" + id
+                                            window.location.href = "/diversity/otu/@proname"+"/resultManage"
                                         }
                                     }
                                 });

@@ -32,8 +32,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val userId = request.session.get("id").head.toInt
     val projectId = Await.result(projectdao.getIdByProjectname(userId, projectname), Duration.Inf)
     val data = new File(Utils.dataPath + "/" + userId + "/" + projectId + "/data")
-    val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
-    if (data.listFiles().size < 2) {
+    if (data.listFiles().length < 2) {
       Redirect(routes.SampleController.uploadData(projectname))
     } else {
       Redirect(routes.SampleController.sampleManage(projectname))
@@ -44,11 +43,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     Ok(views.html.fileupload.uploadFile(proname))
   }
 
-  def home = Action { implicit request =>
-    val userId = request.session.get("id").head.toInt
-    val all = Await.result(projectdao.getAll(userId), Duration.Inf)
-    Ok(views.html.background.home(all))
-  }
+
 
   case class paraData(proname: String, sample: String, encondingType: String, stepMethod: String, adapter: Option[String],
                       seed_mismatches: Option[Int], palindrome_clip_threshold: Option[Int],
@@ -165,14 +160,14 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val date = sampleAll.createdata
     val sa = SampleRow(sampleId, sample, userId, proId, date, 0, 0)
     Await.result(sampledao.update(sa), Duration.Inf)
-    val outPath = path + "/" + userId + "/" + proId + "/" + sampleId
+    val outPath = path + "/" + userId + "/" + proId + "/data/" + sampleId
     new File(outPath + "/tmp").mkdir()
-    val deploy = mutable.Buffer(sampleId, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.get,
-      paradata.palindrome_clip_threshold.get, paradata.simple_clip_threshold.get, paradata.trimMethod,
-      paradata.window_size.get, paradata.required_quality.get, paradata.minlenMethod, paradata.minlen.get,
-      paradata.leadingMethod, paradata.leading.get, paradata.trailingMethod, paradata.trailing.get,
-      paradata.cropMethod, paradata.crop.get, paradata.headcropMethod, paradata.headcrop.get, type2,
-      flashdata.m, flashdata.M, flashdata.x)
+    val deploy = mutable.Buffer(sampleId, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.getOrElse(2),
+      paradata.palindrome_clip_threshold.getOrElse(30), paradata.simple_clip_threshold.getOrElse(10), paradata.trimMethod,
+      paradata.window_size.getOrElse(50), paradata.required_quality.getOrElse(20), paradata.minlenMethod, paradata.minlen.getOrElse(50),
+      paradata.leadingMethod, paradata.leading.getOrElse(3), paradata.trailingMethod, paradata.trailing.getOrElse(3),
+      paradata.cropMethod, paradata.crop.getOrElse(0), paradata.headcropMethod, paradata.headcrop.getOrElse(0), type2,
+      flashdata.m.getOrElse(10), flashdata.M.getOrElse(65), flashdata.x.getOrElse(0.25))
     FileUtils.writeLines(new File(outPath + "/deploy.txt"), deploy.asJava)
     Ok(Json.obj("valid" -> "true"))
   }
@@ -186,7 +181,6 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val command = new ExecCommand
     val tmp = outPath + "/tmp"
     new File(tmp).mkdir()
-    println(command1)
     command.exec(command1, command2, tmp)
     val samples = Await.result(sampledao.getAllSample(ses._1, ses._2), Duration.Inf)
     Await.result(projectdao.updateCount(ses._2, samples.size), Duration.Inf)
@@ -480,17 +474,17 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
       }
       val results = if (x.state == 1) {
         s"""
-           |<a class="fastq" href="/project/download?id=${x.id}&code=1" title="原始数据"><b>${x.sample}</b><b>_1.fastq</b></a>,
-           |<a class="fastq" href="/project/download?id=${x.id}&code=2" title="原始数据"><b>${x.sample}</b><b>_2.fastq</b></a>,
-           |<a class="fastq" href="/project/download?id=${x.id}&code=3" title="拼接结果"><b>${x.sample}</b><b>.fasta</b></a>
+           |<a class="fastq" href="/diversity/sample/download?id=${x.id}&code=1" title="原始数据"><b>${x.sample}</b><b>_1.fastq</b></a>,
+           |<a class="fastq" href="/diversity/sample/download?id=${x.id}&code=2" title="原始数据"><b>${x.sample}</b><b>_2.fastq</b></a>,
+           |<a class="fastq" href="/diversity/sample/download?id=${x.id}&code=3" title="拼接结果"><b>${x.sample}</b><b>.fasta</b></a>
            """.stripMargin
       } else {
         ""
       }
+      //  <button class="update" onclick="restart(this)" value="${x.id}" title="重新进行质控和拼接"><i class="fa fa-repeat"></i></button>
       val operation = if (x.state == 1) {
         s"""
            |  <button class="update" onclick="updateSample(this)" value="${x.sample}" id="${x.id}" title="修改样品名"><i class="fa fa-pencil"></i></button>
-           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新进行质控和拼接"><i class="fa fa-repeat"></i></button>
            |  <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
            |  <button class="delete" onclick="openDelete(this)" value="${x.sample}" id="${x.id}" title="删除样品"><i class="fa fa-trash"></i></button>
            """.stripMargin

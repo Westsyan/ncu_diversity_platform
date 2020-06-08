@@ -19,6 +19,15 @@ import scala.concurrent.{Await, Future}
 
 class ProjectController @Inject()(admindao: adminDao, projectdao: projectDao, sampledao: sampleDao,otudao:otuDao) extends Controller {
 
+  def Bad400 = Action{
+    BadRequest("400")
+  }
+
+
+  def home = Action { implicit request =>
+    Ok(views.html.background.home())
+  }
+
   case class projectData(projectname: String, description: String)
 
   val projectForm = Form(

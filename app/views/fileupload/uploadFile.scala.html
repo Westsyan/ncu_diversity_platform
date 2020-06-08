@@ -1,5 +1,5 @@
 @(proname: String)(implicit session: Session)
-@fileupload.main("数据导入", proname) {
+@background.main("数据导入", proname) {
 
     <style>
             label {
@@ -14,7 +14,7 @@
         <ul class="page-breadcrumb">
             <li>
                 <a href="#">
-                    <i class='fa fa-cloud'></i>
+                    <i class='fa fa-cloud-upload'></i>
                     数据导入
                 </a>
             </li>
@@ -29,7 +29,7 @@
 
                     <div class="portlet-title">
                         <div class="caption">
-                            多样性原始数据质控、比对参数设置界面
+                            多样性原始数据质控、组装参数设置界面
                         </div>
                     </div>
 
@@ -48,14 +48,14 @@
 
                             <div class="form-group">
                                 <label class="col-sm-12">样品名:</label>
-                                <div class="col-sm-4 indent">
+                                <div class="col-sm-5 indent">
                                     <input name="sample" id="sample" class="form-control" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-12">fastq 1 文件（左端）:</label>
-                                <div class="col-sm-4 indent">
+                                <div class="col-sm-5 indent">
                                     <input id="input-1" type="file" class="file" name="file1" data-show-preview="false"
                                     data-show-upload="false" accept=".fq,.fastq,.gz" >
                                 </div>
@@ -63,7 +63,7 @@
 
                             <div class="form-group">
                                 <label class="col-sm-12">fastq 2 文件（右端）:</label>
-                                <div class=" col-sm-4 indent">
+                                <div class=" col-sm-5 indent">
                                     <input id="input-2" type="file" class="file" name="file2" data-show-preview="false"
                                     data-show-upload="false" accept=".fq,.fastq,.gz" >
                                 </div>
@@ -71,7 +71,7 @@
 
 
                             <div class="form-group">
-                                <label class="col-sm-4">Trimmomatic PE(paired-end)(质控参数设置)
+                                <label class="col-sm-5">Trimmomatic PE(paired-end)(质控参数设置)
                                     <a onclick="openLog()" title="帮助文档" class="helpIcon">
                                         <i class="fa fa-question-circle-o"></i></a></label>
                                 <label class="col-sm-1">
@@ -91,7 +91,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Input FASTQ quality file scores encoding type:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="encondingType">
                                                 <option value="-phred64">Illumina 1.3-1.7 Phred+64</option>
                                                 <option value="-phred33" selected>Illumina 1.8+ Phred+33</option>
@@ -103,7 +103,7 @@
                                 <div class="form-group">
                                     <p class="col-sm-5" style="text-indent: 1em;">Perform initial ILLUMINACLIP step?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="stepMethod" onchange="stepChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
@@ -116,7 +116,7 @@
                                     <div class="form-group" >
                                         <p class="col-sm-5 indent-1">Adapter sequences to use:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <select class="form-control" name="adapter">
                                                     <option value="TruSeq2-PE.fa">
                                                         TruSeq2 (paired-ended, for Illumina GAII)</option>
@@ -134,7 +134,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Maximum mismatch count which will still allow a full match to be performed:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="seed_mismatches" id="seed_mismatches" class="form-control" value="2" />
                                             </div>
                                         </div>
@@ -145,7 +145,7 @@
                                             How accurate the match between the two 'adapter ligated' reads must be for PE palin
                                             drome read alignment:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="palindrome_clip_threshold" id="palindrome_clip_threshold" class="form-control" value="30" />
                                             </div>
                                         </div>
@@ -155,7 +155,7 @@
                                         <p class="col-sm-5 indent-1">
                                             How accurate the match between any adapter etc. sequence must be against a read:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="simple_clip_threshold" id="simple_clip_threshold" class="form-control" value="10" />
                                             </div>
                                         </div>
@@ -166,7 +166,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Perform Sliding window trimming (SLIDINGWINDOW)?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="trimMethod" onchange="trimChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
@@ -180,7 +180,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Number of bases to average across:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="window_size" id="window_size" class="form-control" value="50" />
                                             </div>
                                         </div>
@@ -190,7 +190,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Average quality required:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="required_quality" id="required_quality" class="form-control" value="20" />
                                             </div>
                                         </div>
@@ -201,7 +201,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Drop reads below a specified length (MINLEN)?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="minlenMethod" onchange="minlenChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
@@ -215,7 +215,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Minimum length of reads to be kept:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="minlen" id="minlen" class="form-control" value="50" />
                                             </div>
                                         </div>
@@ -226,7 +226,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Cut bases off the start of a read, if below a threshold quality (LEADING)?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="leadingMethod" onchange="leadingChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
@@ -240,7 +240,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Minimum quality required to keep a base:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="leading" id="leading" class="form-control" value="3" />
                                             </div>
                                         </div>
@@ -251,7 +251,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Cut bases off the end of a read, if below a threshold quality (TRAILING)?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="trailingMethod" onchange="trailingChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
@@ -265,7 +265,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Minimum quality required to keep a base:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="trailing" id="trailing" class="form-control" value="20" />
                                             </div>
                                         </div>
@@ -276,7 +276,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Cut the read to a specified length (CROP):</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="cropMethod" onchange="cropChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
@@ -290,7 +290,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Number of bases to keep from the start of the read:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="crop" id="crop" class="form-control" value="0" />
                                             </div>
                                         </div>
@@ -302,7 +302,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Cut the specified number of bases from the start of the read (HEADCROP)?:</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <select class="form-control" name="headcropMethod" onchange="headcropChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
@@ -316,7 +316,7 @@
                                         <p class="col-sm-5 indent-1">
                                             Number of bases to remove from the start of the read:</p>
                                         <div class="col-sm-12 indent-1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <input name="headcrop" id="headcrop" class="form-control" value="0" />
                                             </div>
                                         </div>
@@ -325,7 +325,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4">Using FLASH to merge paired-end reads(拼接参数设置)
+                                <label class="col-sm-5">Using FLASH to merge paired-end reads(拼接参数设置)
                                     <a onclick="openHelp()"  title="帮助文档" class="helpIcon">
                                         <i class="fa fa-question-circle-o"></i></a>
                                 </label>
@@ -346,7 +346,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         The minimum required overlap length between two reads to provide a confident overlap. Default:10bp.</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <input name="m" id="m" class="form-control" value="10" />
                                         </div>
                                     </div>
@@ -356,7 +356,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Maximum overlap length expected in approximately 90% of read pairs. It is by default set to 65bp, which works well for 100bp reads generated from a 180bp library, assuming a normal distribution of fragment lengths.</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <input name="M" id="M" class="form-control" value="65" />
                                         </div>
                                     </div>
@@ -366,7 +366,7 @@
                                     <p class="col-sm-5" style="text-indent: 1em;">
                                         Maximum allowed ratio between the number of mismatched base pairs and the overlap length. Default: 0.25.</p>
                                     <div class="col-sm-12 indent-3">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <input name="x" id="x" class="form-control" value="0.25" />
                                         </div>
                                     </div>
@@ -514,7 +514,7 @@
 
             $(function () {
                 formValidation();
-            })
+            });
 
 
             function openLog() {
@@ -545,7 +545,7 @@
                                 },
                                 remote: {
                                     type: 'POST',
-                                    url: '/project/checkSample?proname=@proname',
+                                    url: '@routes.SampleController.checkSample(proname)',
                                     message: "样品名重复，请重新输入",
                                     delay: 1000
                                 }
@@ -733,7 +733,7 @@
             });
 
             function stepChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#stepValue").show()
                 } else {
@@ -742,7 +742,7 @@
             }
 
             function trimChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#trimValue").show()
                 } else {
@@ -751,7 +751,7 @@
             }
 
             function minlenChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#minlenValue").show()
                 } else {
@@ -760,7 +760,7 @@
             }
 
             function leadingChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#leadingValue").show()
                 } else {
@@ -769,7 +769,7 @@
             }
 
             function trailingChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#trailingValue").show()
                 } else {
@@ -778,7 +778,7 @@
             }
 
             function cropChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#cropValue").show()
                 } else {
@@ -787,7 +787,7 @@
             }
 
             function headcropChange(element) {
-                var value = $(element).find(">option:selected").val()
+                var value = $(element).find(">option:selected").val();
                 if (value == "yes") {
                     $("#headcropValue").show()
                 } else {
@@ -801,11 +801,11 @@
             function Running() {
                 var date = new Date();
                 time = date.getTime();
-                var form = $("#UpdateForm")
-                var fv = form.data("formValidation")
-                fv.validate()
+                var form = $("#UpdateForm");
+                var fv = form.data("formValidation");
+                fv.validate();
                 if (fv.isValid()) {
-                    var element = "<div id='content'><span id='info'>文件上传中： </span><span id='progress'></span></div>"
+                    var element = "<div id='content'><span id='info'>文件上传中： </span><span id='progress'></span></div>";
                     var index = layer.msg(element, {
                         icon: 16
                         , shade: 0.01,
@@ -829,8 +829,7 @@
                             return myXhr; //xhr对象返回给jQuery使用
                         },
                         success: function () {
-                            window.location.href = "/project/toDate?proname=@proname";
-
+                            window.location.href = "/diversity/sample/toDate?proname=@proname";
                         }
                     });
                 }

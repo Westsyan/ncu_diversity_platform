@@ -199,21 +199,21 @@ img {
 }
 
 .indent {
-    margin-left: 4em;
+    padding-left: 4em;
     margin-bottom: 10px;
 }
 
 .indent-1 {
-    margin-left: 6em;
+    padding-left: 6em;
     margin-bottom: 10px;
 }
 
 .indent-2 {
-    margin-left: 2em;
+    padding-left: 2em;
     margin-bottom: 10px;
 }
 .indent-3 {
-    margin-left: 2em;
+    padding-left: 2em;
     margin-top: 5px;
     margin-bottom: 10px;
 }

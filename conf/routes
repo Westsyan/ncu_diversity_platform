@@ -3,89 +3,72 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET           /                                     controllers.LoginController.admin
+GET           /                                              controllers.LoginController.admin
+GET           /Bad400                                        controllers.ProjectController.Bad400
 
-GET           /home/admin                           controllers.LoginController.login
+GET           /diversity/home/admin                          controllers.LoginController.login
+GET           /diversity/home/sign                           controllers.LoginController.sign
+GET           /diversity/home/signSuccess                    controllers.LoginController.signsuccess(account:String,password:String)
+GET           /diversity/home/toSuccess                      controllers.LoginController.toSuccess
+POST          /diversity/home/checkAccount                   controllers.LoginController.checkAccount
 
-GET           /home/sign                            controllers.LoginController.sign
+GET           /diversity/back/logout                         controllers.LoginController.logout
+GET           /diversity/back/toIndex                        controllers.LoginController.toIndex(account:String)
 
-GET           /home/signSuccess                     controllers.LoginController.signsuccess(account:String,password:String)
+GET           /diversity/project/home                        controllers.ProjectController.home
+POST          /diversity/project/getAllPorject               controllers.ProjectController.getAllPorject
+GET           /diversity/project/addProject                  controllers.ProjectController.addProject
+POST          /diversity/project/checkProjectname            controllers.ProjectController.checkProjectname
+POST          /diversity/project/checkNewproname             controllers.ProjectController.checkNewproname
+DELETE        /diversity/project/deleteProject               controllers.ProjectController.deleteProject(id:Int)
+POST          /diversity/project/updateProname               controllers.ProjectController.updateProname
+POST          /diversity/project/updateDescription           controllers.ProjectController.updateDescription
 
-GET           /home/toSuccess                       controllers.LoginController.toSuccess
+GET           /diversity/sample/:proname/sampleManage        controllers.SampleController.sampleManage(proname:String)
+GET           /diversity/sample/toDate                       controllers.SampleController.toDate(proname:String)
+GET           /diversity/sample/uploadFile                   controllers.SampleController.enterHome(projectname:String)
+GET           /diversity/sample/deployGet                    controllers.SampleController.deployGet(id:Int)
+GET           /diversity/sample/:proname/uploadData          controllers.SampleController.uploadData(proname:String)
+POST          /diversity/sample/checkRef                     controllers.SampleController.checkRef(proname:String)
+POST          /diversity/sample/update                       controllers.SampleController.uploadFile
+POST          /diversity/sample/reset                        controllers.SampleController.reset
+PUT           /diversity/sample/updateSample                 controllers.SampleController.updateSample
+DELETE        /diversity/sample/deleteSample                 controllers.SampleController.deleteSample(id:Int)
+POST          /diversity/sample/getAllSmaple                 controllers.SampleController.getAllSample(proname:String)
+GET           /diversity/sample/openLogFile                  controllers.SampleController.openLogFile(id:Int)
+POST          /diversity/sample/checkNewsample               controllers.SampleController.checkNewsample(proname:String)
+POST          /diversity/sample/checkSample                  controllers.SampleController.checkSample(proname:String)
+POST          /diversity/sample/isRunCmd                     controllers.SampleController.isRunCmd(sample:String,proname:String)
+GET           /diversity/sample/download                     controllers.SampleController.download(id:Int,code:Int)
+POST          /diversity/sample/getAllSampleName             controllers.SampleController.getAllSampleName(proname:String)
 
-GET           /back/logout                          controllers.LoginController.logout
+GET           /diversity/otu/:proname/otuPage                controllers.OtuController.otuPage(proname:String)
+GET           /diversity/otu/:proname/resultManage           controllers.OtuController.resultManage(proname:String)
+GET           /diversity/otu/downloadOtu                     controllers.OtuController.download(id:Int,code:Int)
+POST          /diversity/otu/saveDeploy                      controllers.OtuController.saveDeploy
+POST          /diversity/otu/getAllTask                      controllers.OtuController.getAllTask(proname:String)
+DELETE        /diversity/otu/deleteTask                      controllers.OtuController.deleteTask(id:Int)
+POST          /diversity/otu/getTime                         controllers.OtuController.getTime
+GET           /diversity/otu/getOtuLog                       controllers.OtuController.getLog(id:Int)
+POST          /diversity/otu/getDeploy                       controllers.OtuController.getDeploy(id:Int)
+POST          /diversity/otu/getRdpDeploy                    controllers.OtuController.getRdpDeploy(id:Int)
+PUT           /diversity/otu/updateOtuname                   controllers.OtuController.updateOtuName
+POST          /diversity/otu/checkOtuname                    controllers.OtuController.checkOtuname(proname:String)
+POST          /diversity/otu/checkName                       controllers.OtuController.checkName(proname:String)
+POST          /diversity/otu/resetOtu                        controllers.OtuController.resetOtu
+POST          /diversity/otu/runResetCmd                     controllers.OtuController.runResetCmd(id:Int)
+POST          /diversity/otu/resetRdp                        controllers.OtuController.resetRdp
+POST          /diversity/otu/runResetRdpCmd                  controllers.OtuController.runResetRdpCmd(id:Int)
+POST          /diversity/otu/runRdpCmd                       controllers.OtuController.runRdpCmd(id:Int)
+POST          /diversity/otu/prepareRdp                      controllers.OtuController.prepareRdp
+GET           /diversity/otu/getTax                          controllers.OtuController.getTax(id:Int)
 
-GET           /back/toIndex                         controllers.LoginController.toIndex(account:String)
+GET           /diversity/otu/project/deleteAll               controllers.ProjectController.deleteAll(id:Int)
 
-GET           /project/:proname/sampleManage        controllers.SampleController.sampleManage(proname:String)
-GET           /project/toDate                       controllers.SampleController.toDate(proname:String)
-GET           /project/home                         controllers.SampleController.home
-POST          /project/getAllPorject                controllers.ProjectController.getAllPorject
-
-GET           /project/uploadFile                   controllers.SampleController.enterHome(projectname:String)
-GET           /project/deployGet                    controllers.SampleController.deployGet(id:Int)
-GET           /project/:proname/uploadData          controllers.SampleController.uploadData(proname:String)
-
-POST          /projects/checkRef                    controllers.SampleController.checkRef(proname:String)
-
-POST          /project/update                       controllers.SampleController.uploadFile
-POST          /project/reset                        controllers.SampleController.reset
-
-PUT           /project/updateSample                 controllers.SampleController.updateSample
-
-DELETE        /project/deleteSample                 controllers.SampleController.deleteSample(id:Int)
-
-POST          /project/getAllSmaple                 controllers.SampleController.getAllSample(proname:String)
-
-POST          /home/checkAccount                    controllers.LoginController.checkAccount
-
-GET           /project/addProject                   controllers.ProjectController.addProject
-POST          /project/checkProjectname             controllers.ProjectController.checkProjectname
-POST          /project/checkNewproname              controllers.ProjectController.checkNewproname
-DELETE        /project/deleteProject                controllers.ProjectController.deleteProject(id:Int)
-POST          /project/updateProname                controllers.ProjectController.updateProname
-POST          /project/updateDescription            controllers.ProjectController.updateDescription
-
-GET           /project/openLogFile                  controllers.SampleController.openLogFile(id:Int)
-
-POST          /project/checkNewsample               controllers.SampleController.checkNewsample(proname:String)
-POST          /project/checkSample                  controllers.SampleController.checkSample(proname:String)
-
-
-POST          /project/isRunCmd                     controllers.SampleController.isRunCmd(sample:String,proname:String)
-
-GET           /project/download                     controllers.SampleController.download(id:Int,code:Int)
-
-POST          /project/getAllSampleName             controllers.SampleController.getAllSampleName(proname:String)
-
-GET           /project/:proname/otuPage             controllers.OtuController.otuPage(proname:String)
-GET           /project/:proname/resultManage        controllers.OtuController.resultManage(proname:String)
-GET           /project/downloadOtu                  controllers.OtuController.download(id:Int,code:Int)
-POST          /project/saveDeploy                   controllers.OtuController.saveDeploy
-POST          /project/getAllTask                   controllers.OtuController.getAllTask(proname:String)
-DELETE        /project/deleteTask                   controllers.OtuController.deleteTask(id:Int)
-POST          /project/getTime                      controllers.OtuController.getTime
-POST          /project/isRunOtuCmd                  controllers.OtuController.isRunCmd(id:Int)
-GET           /project/getOtuLog                    controllers.OtuController.getLog(id:Int)
-POST          /project/Otu/getDeploy                controllers.OtuController.getDeploy(id:Int)
-POST          /project/Otu/getRdpDeploy             controllers.OtuController.getRdpDeploy(id:Int)
-PUT           /project/Otu/updateOtuname            controllers.OtuController.updateOtuName
-POST          /project/Otu/checkOtuname             controllers.OtuController.checkOtuname(proname:String)
-POST          /project/Otu/checkName                controllers.OtuController.checkName(proname:String)
-POST          /project/Otu/resetOtu                 controllers.OtuController.resetOtu
-POST          /project/Otu/runResetCmd              controllers.OtuController.runResetCmd(id:Int)
-POST          /project/Otu/resetRdp                 controllers.OtuController.resetRdp
-POST          /project/Otu/runResetRdpCmd           controllers.OtuController.runResetRdpCmd(id:Int)
-POST          /project/Otu/runRdpCmd                controllers.OtuController.runRdpCmd(id:Int)
-POST          /project/Otu/prepareRdp               controllers.OtuController.prepareRdp
-GET           /project/Otu/getTax                   controllers.OtuController.getTax(id:Int)
-
-GET           /otu/project/deleteAll                controllers.ProjectController.deleteAll(id:Int)
-
-GET           /unix/getDisk                         controllers.LoginController.getDisk
+GET           /diversity/unix/getDisk                        controllers.LoginController.getDisk
 
 
-# Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
+# Map static resources from the /public folder to the /assets URL pat h
+GET           /assets/*file                                  controllers.Assets.versioned(path="/public", file: Asset)
 
       

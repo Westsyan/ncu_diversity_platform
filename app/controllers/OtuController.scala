@@ -22,15 +22,15 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sampledao: sampleDao, otudao: otuDao,
-                              cc:ControllerComponents)
-                             (implicit exec:ExecutionContext) extends AbstractController(cc) {
+                              cc: ControllerComponents)
+                             (implicit exec: ExecutionContext) extends AbstractController(cc) {
 
   def otuPage(proname: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.otuAnalysis.otuPage(proname))
   }
 
   case class otuData(proname: String, otuname: String, sample: Seq[String], minseqlength: Option[Int],
-                     otu_radius_pct: Option[String], id: Option[String], strand: String,db:String, method: String, c: Option[String],
+                     otu_radius_pct: Option[String], id: Option[String], strand: String, db: String, method: String, c: Option[String],
                      uma: Option[Int], s: Option[String])
 
   val otuForm = Form(
@@ -51,35 +51,35 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   )
 
   def saveDeploy = Action { implicit request =>
-    val data = otuForm.bindFromRequest.get
-    val proname = data.proname
-    val otuname = data.otuname
-    val ses = getUserIdAndProId(request.session, proname)
-    val date = Utils.date
-    val row = OtuRow(0, otuname, ses._1, ses._2, date, 0)
-    Await.result(otudao.addOtuInfo(Seq(row)), Duration.Inf)
-    val otu = Await.result(otudao.getAllByPosition(ses._1, ses._2, otuname), Duration.Inf)
-    val otupath = Utils.otuPath(ses._1, ses._2, otu.id)
-    new File(otupath).mkdirs()
-    val deploy = mutable.Buffer(proname, otuname, data.sample.mkString(","), data.minseqlength.getOrElse(200),
-      data.otu_radius_pct.getOrElse(3.0), data.id.getOrElse(0.97), data.strand, data.db , data.method, data.c.getOrElse(0.7),
-      data.uma.getOrElse(3), data.s.getOrElse(0.9))
-    FileUtils.writeLines(new File(otupath + "/deploy.txt"), deploy.asJava)
-    val run = Future{
-      runCmd(otu.accountid,otu.projectid,otu.id)
+    var valid = "true"
+    var message = ""
+    try {
+      val data = otuForm.bindFromRequest.get
+      val proname = data.proname
+      val otuname = data.otuname
+      val ses = getUserIdAndProId(request.session, proname)
+      val date = Utils.date
+      val row = OtuRow(0, otuname, ses._1, ses._2, date, 0)
+      Await.result(otudao.addOtuInfo(Seq(row)), Duration.Inf)
+      val otu = Await.result(otudao.getAllByPosition(ses._1, ses._2, otuname), Duration.Inf)
+      val otupath = Utils.otuPath(ses._1, ses._2, otu.id)
+      new File(otupath).mkdirs()
+      val deploy = mutable.Buffer(proname, otuname, data.sample.mkString(","), data.minseqlength.getOrElse(200),
+        data.otu_radius_pct.getOrElse(3.0), data.id.getOrElse(0.97), data.strand, data.db, data.method, data.c.getOrElse(0.7),
+        data.uma.getOrElse(3), data.s.getOrElse(0.9))
+      FileUtils.writeLines(new File(otupath + "/deploy.txt"), deploy.asJava)
+      val run = Future {
+        runCmd(otu.accountid, otu.projectid, otu.id)
+      }
+    }catch{
+      case e : Exception =>
+        valid = "false"
+        message = e.getMessage
     }
-    val json = Json.obj("valid" -> "true", "id" -> otu.id)
-    Ok(Json.toJson(json))
+
+    Ok(Json.obj("valid" -> valid,"message" -> message))
   }
 
-  def isRunCmd(id: Int) = Action.async { implicit request =>
-    otudao.getById(id).map { x =>
-      if (x.state == 0) {
-        runCmd(x.accountid, x.projectid, x.id)
-      }
-      Ok(Json.toJson("success"))
-    }
-  }
 
   def runCmd(userId: Int, proId: Int, otuId: Int) = {
     val path = Utils.otuPath(userId, proId, otuId)
@@ -126,7 +126,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
     val data = FileUtils.readLines(new File(path, "deploy.txt")).asScala
     val command = if (data(8) == "rdp") {
       s"assign_taxonomy.py -t ${Utils.toolPath}/otu/Taxonomy/${data(7)}.tax -r ${Utils.toolPath}/otu/Taxonomy/${data(7)}.fasta -i ${path}/otu_rep_seqs.fasta " +
-        s"-o ${path}/tmp -m rdp --rdp_max_memory=50000 -c ${data(9)}"
+        s"-o ${path}/tmp -m rdp --rdp_max_memory=200000 -c ${data(9)}"
     } else {
       s"assign_taxonomy.py -t ${Utils.toolPath}/otu/Taxonomy/${data(7)}.tax -r ${Utils.toolPath}/otu/Taxonomy/${data(7)}.fasta -i ${path}/otu_rep_seqs.fasta " +
         s"-o ${path}/tmp -m uclust --similarity=${data(11)} --uclust_max_accepts=${data(10)}"
@@ -137,6 +137,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   def resultManage(proname: String) = Action { implicit request =>
     Ok(views.html.otuAnalysis.task(proname))
   }
+
 
   def getUserIdAndProId(session: Session, proname: String): (Int, Int) = {
     val userId = session.get("id").head.toInt
@@ -194,19 +195,21 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
       }
       val results = if (x.state == 1) {
         s"""
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=1" title="OTU代表序列"><b>otu_rep_seqs.fasta</b></a>,&nbsp;
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=2" title="OTU丰度信息表"><b>otu_table.txt</b></a>,&nbsp;
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=3" title="分类学注释结果"><b>tax_assign.txt</b></a>
+           |<a class="fastq" href="/diversity/otu/downloadOtu?id=${x.id}&code=1" title="OTU代表序列"><b>otu_rep_seqs.fasta</b></a>,&nbsp;
+           |<a class="fastq" href="/diversity/otu/downloadOtu?id=${x.id}&code=2" title="OTU丰度信息表"><b>otu_table.txt</b></a>,&nbsp;
+           |<a class="fastq" href="/diversity/otu/downloadOtu?id=${x.id}&code=3" title="分类学注释结果"><b>tax_assign.txt</b></a>
            |<button class="update" onclick="openTable(this)"  id="${x.id}" title="OTU Taxon Table"><i class="fa fa-eye"></i></button>
            """.stripMargin
       } else {
         ""
       }
+      /*
+        <button class="update" onclick="restart(this)" value="${x.id}" title="重新运行OTU聚类和分类学注释"><i class="fa fa-repeat"></i></button>
+       <button class="update" onclick="openRdp(this)" value="${x.id}" title="重新运行分类学注释"><i class="fa fa-rotate-left"></i></button>
+      * */
       val operation = if (x.state == 1) {
         s"""
-           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新运行OTU聚类和分类学注释"><i class="fa fa-repeat"></i></button>
-           |  <button class="update" onclick="openRdp(this)" value="${x.id}" title="重新运行分类学注释"><i class="fa fa-rotate-left"></i></button>
-           |  <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
+              |  <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
            |  <button class="delete" onclick="openDelete(this)" value="${x.otuname}" id="${x.id}" title="删除任务"><i class="fa fa-trash"></i></button>
            """.stripMargin
       } else if (x.state == 2) {
@@ -232,7 +235,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   def deleteTask(id: Int) = Action.async { implicit request =>
     otudao.getById(id).flatMap { x =>
       otudao.deleteOtu(id).map { y =>
-        val run = Future{
+        val run = Future {
           val path = Utils.otuPath(x.accountid, x.projectid, id)
           FileUtils.deleteDirectory(new File(path))
         }
@@ -285,7 +288,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
           ("false", "样品" + s.mkString(",") + "已被删除")
         }
         val json = Json.obj("sample" -> deploy(2), "min" -> deploy(3), "otupct" -> deploy(4), "id" -> deploy(5),
-          "strand" -> deploy(6),"db" -> deploy(7), "method" -> deploy(8), "c" -> deploy(9), "uma" -> deploy(10), "s" -> deploy(11),
+          "strand" -> deploy(6), "db" -> deploy(7), "method" -> deploy(8), "c" -> deploy(9), "uma" -> deploy(10), "s" -> deploy(11),
           "valid" -> valid, "message" -> message)
         Ok(Json.toJson(json))
 
@@ -297,12 +300,12 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   def getRdpDeploy(id: Int) = Action { implicit request =>
     val row = Await.result(otudao.getById(id), Duration.Inf)
     val deploy = getDeployInfo(id)
-    val json = Json.obj("otuname" -> row.otuname, "c" -> deploy(9), "db" -> deploy(7) ,"method" -> deploy(8),
+    val json = Json.obj("otuname" -> row.otuname, "c" -> deploy(9), "db" -> deploy(7), "method" -> deploy(8),
       "uma" -> deploy(10), "s" -> deploy(11))
     Ok(Json.toJson(json))
   }
 
-  case class RdpData(rdp_id: Int, method_2: String, db_2 : String,rdp_c: String, rdp_uma: Int, rdp_s: String)
+  case class RdpData(rdp_id: Int, method_2: String, db_2: String, rdp_c: String, rdp_uma: Int, rdp_s: String)
 
   val rdpForm = Form(
     mapping(
@@ -322,7 +325,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
       val path = Utils.otuPath(x.accountid, x.projectid, x.id)
       val deploy = FileUtils.readLines(new File(path, "deploy.txt")).asScala
       val c = data.rdp_c
-      val d = mutable.Buffer(deploy(0), deploy(1), deploy(2), deploy(3), deploy(4), deploy(5), deploy(6),data.db_2, data.method_2, c, data.rdp_uma, data.rdp_s)
+      val d = mutable.Buffer(deploy(0), deploy(1), deploy(2), deploy(3), deploy(4), deploy(5), deploy(6), data.db_2, data.method_2, c, data.rdp_uma, data.rdp_s)
       new File(path, "deploy.txt").delete()
       FileUtils.writeLines(new File(path, "deploy.txt"), d.asJava)
       otudao.updateState(x.id, 0).map { y =>
@@ -379,8 +382,8 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
     }
   }
 
-  case class resetData(otuIds: Int,  minseqlength: Option[Int], otu_radius_pct: Option[String], id: Option[String],
-                       strand: String,db_1: String, method_1: String, c: Option[String],
+  case class resetData(otuIds: Int, minseqlength: Option[Int], otu_radius_pct: Option[String], id: Option[String],
+                       strand: String, db_1: String, method_1: String, c: Option[String],
                        uma: Option[Int], s: Option[String])
 
   val resetForm = Form(
@@ -405,7 +408,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
       val path = Utils.otuPath(x.accountid, x.projectid, x.id)
       val buffer = FileUtils.readLines(new File(path, "deploy.txt")).asScala
       val b = mutable.Buffer(buffer.head, buffer(1), buffer(2), data.minseqlength.getOrElse(200),
-        data.otu_radius_pct.getOrElse(3.0), data.id.getOrElse(0.97), data.strand, data.db_1,data.method_1, data.c.getOrElse(0.7),
+        data.otu_radius_pct.getOrElse(3.0), data.id.getOrElse(0.97), data.strand, data.db_1, data.method_1, data.c.getOrElse(0.7),
         data.uma.getOrElse(3), data.s.getOrElse(0.9))
       new File(path, "deploy.txt").delete()
       FileUtils.writeLines(new File(path, "deploy.txt"), b.asJava)
@@ -520,7 +523,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
         }
       }.distinct.diff(Array("null")).head
     }
-    val json =getDataJson(head +: z)
+    val json = getDataJson(head +: z)
 
 
     Ok(Json.toJson(json))

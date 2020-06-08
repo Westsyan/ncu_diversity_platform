@@ -1,5 +1,5 @@
 @(proname: String)(implicit session: Session)
-@fileupload.main("样品管理", proname) {
+@background.main("样品管理", proname) {
 
     <style>
             .update {
@@ -121,7 +121,7 @@
                                     <div class="form-group">
                                         <label class="control-label">
                                             新的样品名: </label>
-                                        <input class="form-control indent" name="newsample" id="newsample" >
+                                            <input class="form-control" name="newsample" id="newsample" >
                                     </div>
                                 </div>
                             </div>
@@ -302,7 +302,7 @@
                 $("#deploy").empty();
                 var id = obj.value;
                 $.ajax({
-                    url: "/project/deployGet?id=" + id,
+                    url: "/diversity/sample/deployGet?id=" + id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
@@ -327,7 +327,7 @@
                 var id = obj.value;
                 deleting();
                 $.ajax({
-                    url: "/project/deleteSample?id=" + id,
+                    url: "/diversity/sample/deleteSample?id=" + id,
                     type: "delete",
                     dataType: "json",
                     success: function (data) {
@@ -347,7 +347,7 @@
                 $("#logInfo").empty();
                 var id = obj.value;
                 $.ajax({
-                    url: "/project/openLogFile?id=" + id,
+                    url: "/diversity/sample/openLogFile?id=" + id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
@@ -380,8 +380,8 @@
             }
 
             function Running() {
-                var form = $("#resetForm")
-                var fv = form.data("formValidation")
+                var form = $("#resetForm");
+                var fv = form.data("formValidation");
                 fv.validate()
                 if (fv.isValid()) {
                     $.ajax({
@@ -395,7 +395,7 @@
                                 updateTable();
                                 var sample = $("#sample").val();
                                 $.ajax({
-                                    url: "/project/isRunCmd?proname=@proname&sample=" + sample,
+                                    url: "/diversity/sample/isRunCmd?proname=@proname&sample=" + sample,
                                     type: "post"
                                 })
                             }

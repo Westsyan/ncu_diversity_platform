@@ -43,7 +43,7 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampled
   }
 
   def toIndex(account:String) : Action[AnyContent]=Action{ implicit request=>
-        Redirect(routes.SampleController.home()).withSession(request.session + ("user" -> "March") +("id" -> "2"))
+        Redirect(routes.ProjectController.home()).withSession(request.session + ("user" -> "March") +("id" -> "2"))
   }
 
 

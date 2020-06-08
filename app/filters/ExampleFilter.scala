@@ -1,8 +1,10 @@
 package filters
 
 import akka.stream.Materializer
+import controllers.routes
 import javax.inject._
 import play.api.mvc._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -20,13 +22,12 @@ class ExampleFilter @Inject()(
     implicit override val mat: Materializer,
     exec: ExecutionContext) extends Filter {
 
-  override def apply(nextFilter: RequestHeader => Future[Result])
-           (requestHeader: RequestHeader): Future[Result] = {
-    // Run the next filter in the chain. This will call other filters
-    // and eventually call the action. Take the result and modify it
-    // by adding a new header.
-    nextFilter(requestHeader).map { result =>
-      result.withHeaders("X-ExampleFilter" -> "foo")
+  override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+    if (rh.session.get("id").isEmpty  && !rh.path.contains("/assets/") || rh.path == "/" ||
+      (rh.path.contains("home")) && rh.path != "/diversity/project/home") {
+      Future.successful(Results.Redirect(routes.ProjectController.Bad400()))
+    } else {
+      f(rh)
     }
   }
 
